@@ -1,0 +1,3111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>LIFELINK — Emergency Coordination</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;.
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100vh;
+            background: #111827;
+            color: white;
+            padding: 25px 18px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .tagline {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 5px;
+            margin-bottom: 35px;
+        }
+
+        .menu-title {
+            font-size: 10px;
+            color: #6b7280;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            padding: 12px 14px;
+            margin-bottom: 5px;
+            border-radius: 7px;
+            color: #d1d5db;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 230px;
+            padding: 25px 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .page-subtitle {
+            margin-top: 5px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .system-status {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 9px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* ================= PAGE SECTIONS ================= */
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* ================= STAT CARDS ================= */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .stat-value {
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        /* ================= GRID ================= */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .section-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            font-size: 11px;
+            color: #6b7280;
+            padding: 11px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        td {
+            padding: 13px 11px;
+            font-size: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* ================= BADGES ================= */
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .critical {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .high {
+            background: #ffedd5;
+            color: #c2410c;
+        }
+
+        .medium {
+            background: #fef3c7;
+            color: #a16207;
+        }
+
+        .low {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .pending {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .verified {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .available {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        /* ================= RECOMMENDATIONS ================= */
+
+        .recommendation {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .recommendation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resource-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .recommendation-info {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .score {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* ================= OPERATIONS ================= */
+
+        .operations-card {
+            margin-top: 20px;
+        }
+
+        .operation-form {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            outline: none;
+            font-size: 12px;
+            background: white;
+        }
+
+        .input:focus {
+            border-color: #2563eb;
+        }
+
+        .button {
+            padding: 11px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .button:hover {
+            background: #1d4ed8;
+        }
+
+        .verify-button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            background: #16a34a;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .verify-button:hover {
+            background: #15803d;
+        }
+
+        .operation-message {
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        /* ================= ANALYTICS ================= */
+
+        .analytics-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .analytics-label {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        /* ================= SETTINGS ================= */
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 13px;
+        }
+
+        .setting-label {
+            color: #6b7280;
+        }
+
+        .setting-value {
+            font-weight: bold;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty {
+            padding: 25px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1000px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid,
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .operation-form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 180px;
+            }
+
+            .main {
+                margin-left: 180px;
+                padding: 15px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .operation-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            LIFELINK
+        </div>
+
+        <div class="tagline">
+            Intelligent Emergency Coordination
+        </div>
+
+
+        <div class="menu-title">
+            MAIN
+        </div>
+
+
+        <div class="menu-item active"
+             onclick="showPage('dashboard', this)">
+            Dashboard
+        </div>
+
+
+        <div class="menu-item"
+             onclick="showPage('emergencies', this)">
+            Emergencies
+        </div>
+
+
+        <div class="menu-item"
+             onclick="showPage('people', this)">
+            Affected People
+        </div>
+
+
+        <div class="menu-item"
+             onclick="showPage('resources', this)">
+            Resources
+        </div>
+
+
+        <div class="menu-item"
+             onclick="showPage('recommendations', this)">
+            Recommendations
+        </div>
+
+
+        <div class="menu-title"
+             style="margin-top: 30px;">
+            SYSTEM
+        </div>
+
+
+        <div class="menu-item"
+             onclick="showPage('analytics', this)">
+            Analytics
+        </div>
+
+
+        <div class="menu-item"
+             onclick="showPage('settings', this)">
+            Settings
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+
+        <!-- =========================================================
+             DASHBOARD
+             ========================================================= -->
+
+        <section id="dashboard"
+                 class="page-section active">
+
+
+            <div class="topbar">
+
+                <div>
+
+                    <div class="page-title">
+                        Emergency Dashboard
+                    </div>
+
+                    <div class="page-subtitle">
+                        Real-time emergency coordination and resource intelligence
+                    </div>
+
+                </div>
+
+                <div class="system-status">
+                    ● LIFELINK SYSTEM ONLINE
+                </div>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="stats">
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Critical Emergencies
+                    </div>
+
+                    <div class="stat-value"
+                         id="criticalCount">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        High Priority
+                    </div>
+
+                    <div class="stat-value"
+                         id="highCount">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Available Resources
+                    </div>
+
+                    <div class="stat-value"
+                         id="resourceCount">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Total Emergency Needs
+                    </div>
+
+                    <div class="stat-value"
+                         id="needCount">
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DASHBOARD GRID -->
+
+            <div class="dashboard-grid">
+
+
+                <!-- PRIORITY -->
+
+                <div class="card">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <div class="section-title">
+                                Emergency Priority Ranking
+                            </div>
+
+                            <div class="section-subtitle">
+                                Explainable emergency prioritization
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>RANK</th>
+                                    <th>NEED</th>
+                                    <th>INCIDENT</th>
+                                    <th>SCORE</th>
+                                    <th>LEVEL</th>
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="priorityTable">
+
+                                <tr>
+
+                                    <td colspan="5">
+
+                                        <div class="empty">
+                                            Loading emergency intelligence...
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RECOMMENDATIONS -->
+
+                <div class="card">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <div class="section-title">
+                                Resource Recommendations
+                            </div>
+
+                            <div class="section-subtitle">
+                                Explainable resource matching
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="recommendationList">
+
+                        <div class="empty">
+                            Loading recommendations...
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- OPERATIONS -->
+
+            <div class="card operations-card">
+
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-title">
+                            Emergency Operations
+                        </div>
+
+                        <div class="section-subtitle">
+                            Create a new emergency need and send it to the LIFELINK intelligence engine.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <form id="needForm"
+                      class="operation-form">
+
+
+                    <input
+                        id="needType"
+                        class="input"
+                        placeholder="Need type e.g. MEDICAL"
+                        required>
+
+
+                    <input
+                        id="needDescription"
+                        class="input"
+                        placeholder="Emergency description"
+                        required>
+
+
+                    <input
+                        id="needUrgency"
+                        class="input"
+                        type="number"
+                        min="1"
+                        max="5"
+                        placeholder="Urgency 1-5"
+                        required>
+
+
+                    <input
+                        id="needLocation"
+                        class="input"
+                        placeholder="Location"
+                        required>
+
+
+                    <select
+                        id="affectedPersonId"
+                        class="input"
+                        required>
+
+                        <option value="">
+                            Select Affected Person
+                        </option>
+
+                        <option value="2">
+                            Ravi Sharma (ID 2)
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        type="submit"
+                        class="button">
+
+                        Create Emergency Need
+
+                    </button>
+
+
+                </form>
+
+
+                <div id="operationMessage"
+                     class="operation-message">
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================================
+             EMERGENCIES
+             ========================================================= -->
+
+        <section id="emergencies"
+                 class="page-section">
+
+
+            <div class="topbar">
+
+                <div>
+
+                    <div class="page-title">
+                        Emergencies
+                    </div>
+
+                    <div class="page-subtitle">
+                        Incident monitoring and emergency situation overview
+                    </div>
+
+                </div>
+
+                <div class="system-status">
+                    ● SYSTEM ONLINE
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-title">
+                            Active Emergency Incidents
+                        </div>
+
+                        <div class="section-subtitle">
+                            Live incident information from the LIFELINK database
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>TITLE</th>
+                                <th>TYPE</th>
+                                <th>LOCATION</th>
+                                <th>SEVERITY</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="incidentTable">
+
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty">
+                                        Loading incidents...
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================================
+             AFFECTED PEOPLE
+             ========================================================= -->
+
+        <section id="people"
+                 class="page-section">
+
+
+            <div class="topbar">
+
+                <div>
+
+                    <div class="page-title">
+                        Affected People
+                    </div>
+
+                    <div class="page-subtitle">
+                        People requiring emergency assistance
+                    </div>
+
+                </div>
+
+                <div class="system-status">
+                    ● SYSTEM ONLINE
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-title">
+                            Affected Person Registry
+                        </div>
+
+                        <div class="section-subtitle">
+                            Medical and location information
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>NAME</th>
+                                <th>AGE</th>
+                                <th>GENDER</th>
+                                <th>CONDITION</th>
+                                <th>LOCATION</th>
+                                <th>MEDICAL ATTENTION</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="peopleTable">
+
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty">
+                                        Loading affected people...
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================================
+             RESOURCES
+             ========================================================= -->
+
+        <section id="resources"
+                 class="page-section">
+
+
+            <div class="topbar">
+
+                <div>
+
+                    <div class="page-title">
+                        Resources
+                    </div>
+
+                    <div class="page-subtitle">
+                        Emergency resource inventory and availability
+                    </div>
+
+                </div>
+
+                <div class="system-status">
+                    ● SYSTEM ONLINE
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-title">
+                            Resource Inventory
+                        </div>
+
+                        <div class="section-subtitle">
+                            Available emergency response resources
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>NAME</th>
+                                <th>TYPE</th>
+                                <th>QUANTITY</th>
+                                <th>STATUS</th>
+                                <th>LOCATION</th>
+                                <th>PRIORITY</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="resourceTable">
+
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty">
+                                        Loading resources...
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================================
+             RECOMMENDATIONS
+             ========================================================= -->
+
+        <section id="recommendations"
+                 class="page-section">
+
+
+            <div class="topbar">
+
+                <div>
+
+                    <div class="page-title">
+                        Recommendations
+                    </div>
+
+                    <div class="page-subtitle">
+                        Resource intelligence and human verification
+                    </div>
+
+                </div>
+
+                <div class="system-status">
+                    ● INTELLIGENCE ENGINE ONLINE
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-title">
+                            Resource Recommendations
+                        </div>
+
+                        <div class="section-subtitle">
+                            Recommendations generated by the resource matching engine
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div id="fullRecommendationList">
+
+                    <div class="empty">
+                        Loading recommendations...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================================
+             ANALYTICS
+             ========================================================= -->
+
+        <section id="analytics"
+                 class="page-section">
+
+
+            <div class="topbar">
+
+                <div>
+
+                    <div class="page-title">
+                        Analytics
+                    </div>
+
+                    <div class="page-subtitle">
+                        LIFELINK emergency intelligence overview
+                    </div>
+
+                </div>
+
+                <div class="system-status">
+                    ● ANALYTICS ONLINE
+                </div>
+
+            </div>
+
+
+            <div class="stats">
+
+
+                <div class="stat-card">
+
+                    <div class="analytics-label">
+                        Total Incidents
+                    </div>
+
+                    <div class="analytics-number"
+                         id="analyticsIncidents">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="analytics-label">
+                        Total Affected People
+                    </div>
+
+                    <div class="analytics-number"
+                         id="analyticsPeople">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="analytics-label">
+                        Total Resources
+                    </div>
+
+                    <div class="analytics-number"
+                         id="analyticsResources">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="analytics-label">
+                        Verified Recommendations
+                    </div>
+
+                    <div class="analytics-number"
+                         id="analyticsVerified">
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="two-column">
+
+
+                <div class="card">
+
+                    <div class="section-title">
+                        Priority Distribution
+                    </div>
+
+                    <div class="section-subtitle">
+                        Current emergency priority levels
+                    </div>
+
+                    <br>
+
+                    <div class="setting-row">
+                        <span class="setting-label">
+                            Critical
+                        </span>
+
+                        <span class="setting-value"
+                              id="analyticsCritical">
+                            0
+                        </span>
+                    </div>
+
+
+                    <div class="setting-row">
+                        <span class="setting-label">
+                            High
+                        </span>
+
+                        <span class="setting-value"
+                              id="analyticsHigh">
+                            0
+                        </span>
+                    </div>
+
+
+                    <div class="setting-row">
+                        <span class="setting-label">
+                            Medium
+                        </span>
+
+                        <span class="setting-value"
+                              id="analyticsMedium">
+                            0
+                        </span>
+                    </div>
+
+
+                    <div class="setting-row">
+                        <span class="setting-label">
+                            Low
+                        </span>
+
+                        <span class="setting-value"
+                              id="analyticsLow">
+                            0
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="section-title">
+                        Resource Availability
+                    </div>
+
+                    <div class="section-subtitle">
+                        Current operational resource status
+                    </div>
+
+                    <br>
+
+                    <div class="setting-row">
+
+                        <span class="setting-label">
+                            Available
+                        </span>
+
+                        <span class="setting-value"
+                              id="analyticsAvailable">
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <span class="setting-label">
+                            Unavailable
+                        </span>
+
+                        <span class="setting-value"
+                              id="analyticsUnavailable">
+                            0
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================================
+             SETTINGS
+             ========================================================= -->
+
+        <section id="settings"
+                 class="page-section">
+
+
+            <div class="topbar">
+
+                <div>
+
+                    <div class="page-title">
+                        Settings
+                    </div>
+
+                    <div class="page-subtitle">
+                        LIFELINK system configuration
+                    </div>
+
+                </div>
+
+                <div class="system-status">
+                    ● SYSTEM ONLINE
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <div class="section-title">
+                            System Configuration
+                        </div>
+
+                        <div class="section-subtitle">
+                            Current application environment
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <span class="setting-label">
+                        Application
+                    </span>
+
+                    <span class="setting-value">
+                        LIFELINK
+                    </span>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <span class="setting-label">
+                        System Type
+                    </span>
+
+                    <span class="setting-value">
+                        Emergency Decision Support
+                    </span>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <span class="setting-label">
+                        Backend
+                    </span>
+
+                    <span class="setting-value">
+                        Spring Boot
+                    </span>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <span class="setting-label">
+                        Database
+                    </span>
+
+                    <span class="setting-value">
+                        PostgreSQL
+                    </span>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <span class="setting-label">
+                        Intelligence Engine
+                    </span>
+
+                    <span class="setting-value">
+                        Priority + Resource Matching
+                    </span>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <span class="setting-label">
+                        Verification Model
+                    </span>
+
+                    <span class="setting-value">
+                        Human Verification Required
+                    </span>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <span class="setting-label">
+                        Server
+                    </span>
+
+                    <span class="setting-value">
+                        localhost:8080
+                    </span>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <span class="setting-label">
+                        Data Mode
+                    </span>
+
+                    <span class="setting-value">
+                        SIMULATED DATA
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+
+        const API =
+            "http://localhost:8080";
+
+
+        /* =========================================================
+           NAVIGATION
+           ========================================================= */
+
+        function showPage(
+            pageId,
+            clickedItem
+        ) {
+
+            document
+                .querySelectorAll(".page-section")
+                .forEach(
+                    section => {
+                        section.classList.remove(
+                            "active"
+                        );
+                    }
+                );
+
+
+            document
+                .getElementById(pageId)
+                .classList.add("active");
+
+
+            document
+                .querySelectorAll(".menu-item")
+                .forEach(
+                    item => {
+                        item.classList.remove(
+                            "active"
+                        );
+                    }
+                );
+
+
+            clickedItem.classList.add(
+                "active"
+            );
+
+
+            if (pageId === "emergencies") {
+                loadIncidents();
+            }
+
+            if (pageId === "people") {
+                loadPeople();
+            }
+
+            if (pageId === "resources") {
+                loadResources();
+            }
+
+            if (pageId === "recommendations") {
+                loadFullRecommendations();
+            }
+
+            if (pageId === "analytics") {
+                loadAnalytics();
+            }
+
+        }
+
+
+        /* =========================================================
+           LOAD DASHBOARD
+           ========================================================= */
+
+        async function loadDashboard() {
+
+            try {
+
+                const [
+
+                    rankingResponse,
+                    needsResponse,
+                    resourcesResponse,
+                    allocationsResponse
+
+                ] = await Promise.all([
+
+                    fetch(
+                        API +
+                        "/api/emergency-priority/ranking"
+                    ),
+
+                    fetch(
+                        API +
+                        "/api/emergency-needs"
+                    ),
+
+                    fetch(
+                        API +
+                        "/api/resources"
+                    ),
+
+                    fetch(
+                        API +
+                        "/api/resource-allocations"
+                    )
+
+                ]);
+
+
+                const ranking =
+                    await rankingResponse.json();
+
+                const needs =
+                    await needsResponse.json();
+
+                const resources =
+                    await resourcesResponse.json();
+
+                const allocations =
+                    await allocationsResponse.json();
+
+
+                updateStatistics(
+                    ranking,
+                    needs,
+                    resources
+                );
+
+
+                updatePriorityTable(
+                    ranking
+                );
+
+
+                updateRecommendations(
+                    allocations
+                );
+
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Dashboard loading error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           UPDATE STATISTICS
+           ========================================================= */
+
+        function updateStatistics(
+            ranking,
+            needs,
+            resources
+        ) {
+
+            const critical =
+                ranking.filter(
+                    item =>
+                        item.priorityLevel ===
+                        "CRITICAL"
+                ).length;
+
+
+            const high =
+                ranking.filter(
+                    item =>
+                        item.priorityLevel ===
+                        "HIGH"
+                ).length;
+
+
+            const available =
+                resources.filter(
+                    resource =>
+                        resource.availabilityStatus &&
+                        resource.availabilityStatus
+                            .toUpperCase() ===
+                        "AVAILABLE"
+                ).length;
+
+
+            document.getElementById(
+                "criticalCount"
+            ).textContent =
+                critical;
+
+
+            document.getElementById(
+                "highCount"
+            ).textContent =
+                high;
+
+
+            document.getElementById(
+                "resourceCount"
+            ).textContent =
+                available;
+
+
+            document.getElementById(
+                "needCount"
+            ).textContent =
+                needs.length;
+
+        }
+
+
+        /* =========================================================
+           PRIORITY TABLE
+           ========================================================= */
+
+        function updatePriorityTable(
+            ranking
+        ) {
+
+            const table =
+                document.getElementById(
+                    "priorityTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            if (
+                !ranking ||
+                ranking.length === 0
+            ) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td colspan="5">
+
+                            <div class="empty">
+                                No emergency priorities available.
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+            ranking.forEach(
+                item => {
+
+                    const level =
+                        item.priorityLevel
+                            .toLowerCase();
+
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    const incidentDisplay =
+                        item.incidentId !== null &&
+                        item.incidentId !== undefined
+
+                            ? "Incident #" +
+                              item.incidentId
+
+                            : "No Incident Linked";
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            <strong>
+                                #${item.rank}
+                            </strong>
+                        </td>
+
+                        <td>
+                            Need #${item.emergencyNeedId}
+                        </td>
+
+                        <td>
+                            ${incidentDisplay}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${item.priorityScore}/100
+                            </strong>
+                        </td>
+
+                        <td>
+
+                            <span class="badge ${level}">
+                                ${item.priorityLevel}
+                            </span>
+
+                        </td>
+
+                    `;
+
+
+                    table.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =========================================================
+           RECOMMENDATIONS
+           ========================================================= */
+
+        function updateRecommendations(
+            allocations
+        ) {
+
+            const container =
+                document.getElementById(
+                    "recommendationList"
+                );
+
+
+            container.innerHTML = "";
+
+
+            if (
+                !allocations ||
+                allocations.length === 0
+            ) {
+
+                container.innerHTML = `
+
+                    <div class="empty">
+                        No resource recommendations available.
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            allocations.forEach(
+                allocation => {
+
+                    container.appendChild(
+                        createRecommendationCard(
+                            allocation
+                        )
+                    );
+
+                }
+            );
+
+        }
+
+
+        function createRecommendationCard(
+            allocation
+        ) {
+
+            const resource =
+                allocation.resource;
+
+
+            const need =
+                allocation.emergencyNeed;
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "recommendation";
+
+
+            let verificationSection;
+
+
+            if (
+                allocation.status ===
+                "PENDING_HUMAN_VERIFICATION"
+            ) {
+
+                verificationSection = `
+
+                    <div
+                        style="
+                            margin-top: 12px;
+                            display: flex;
+                            justify-content: flex-end;
+                        "
+                    >
+
+                        <button
+                            class="verify-button"
+                            onclick="
+                                verifyRecommendation(
+                                    ${allocation.id}
+                                )
+                            "
+                        >
+
+                            ✓ Verify Recommendation
+
+                        </button>
+
+                    </div>
+
+                `;
+
+            }
+
+            else if (
+                allocation.status ===
+                "VERIFIED"
+            ) {
+
+                verificationSection = `
+
+                    <div
+                        style="
+                            margin-top: 12px;
+                            display: flex;
+                            justify-content: flex-end;
+                        "
+                    >
+
+                        <span
+                            style="
+                                color: #15803d;
+                                font-size: 12px;
+                                font-weight: bold;
+                            "
+                        >
+
+                            ✓ Human Verified
+
+                        </span>
+
+                    </div>
+
+                `;
+
+            }
+
+            else {
+
+                verificationSection = "";
+
+            }
+
+
+            const statusClass =
+                allocation.status ===
+                "VERIFIED"
+
+                    ? "verified"
+
+                    : "pending";
+
+
+            card.innerHTML = `
+
+                <div class="recommendation-header">
+
+                    <div>
+
+                        <div class="resource-name">
+
+                            ${
+                                resource
+                                    ? resource.name
+                                    : "Resource"
+                            }
+
+                        </div>
+
+                        <div
+                            style="
+                                font-size:11px;
+                                color:#6b7280;
+                                margin-top:3px;
+                            "
+                        >
+
+                            Recommended for
+                            Need #${
+                                need
+                                    ? need.id
+                                    : "N/A"
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="score">
+
+                        ${allocation.matchScore}/100
+
+                    </div>
+
+                </div>
+
+
+                <div class="recommendation-info">
+
+                    <strong>
+                        Type:
+                    </strong>
+
+                    ${
+                        resource
+                            ? resource.type
+                            : "N/A"
+                    }
+
+                    <br>
+
+
+                    <strong>
+                        Location:
+                    </strong>
+
+                    ${
+                        resource
+                            ? resource.location
+                            : "N/A"
+                    }
+
+                    <br>
+
+
+                    <strong>
+                        Status:
+                    </strong>
+
+                    <span class="badge ${statusClass}">
+
+                        ${allocation.status}
+
+                    </span>
+
+                    <br>
+
+
+                    <strong>
+                        Reason:
+                    </strong>
+
+                    ${
+                        allocation.recommendationReason
+                    }
+
+                </div>
+
+
+                ${verificationSection}
+
+            `;
+
+
+            return card;
+
+        }
+
+
+        /* =========================================================
+           VERIFY RECOMMENDATION
+           ========================================================= */
+
+        async function verifyRecommendation(
+            allocationId
+        ) {
+
+            try {
+
+                const allocationsResponse =
+                    await fetch(
+                        API +
+                        "/api/resource-allocations"
+                    );
+
+
+                if (!allocationsResponse.ok) {
+
+                    throw new Error(
+                        "Unable to load allocation"
+                    );
+
+                }
+
+
+                const allocations =
+                    await allocationsResponse.json();
+
+
+                const allocation =
+                    allocations.find(
+                        item =>
+                            item.id ===
+                            allocationId
+                    );
+
+
+                if (!allocation) {
+
+                    throw new Error(
+                        "Allocation not found"
+                    );
+
+                }
+
+
+                const response =
+                    await fetch(
+
+                        API +
+                        "/api/resource-allocations/" +
+                        allocationId,
+
+                        {
+
+                            method: "PUT",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    recommendationReason:
+                                        allocation.recommendationReason,
+
+                                    matchScore:
+                                        allocation.matchScore,
+
+                                    status:
+                                        "VERIFIED",
+
+                                    emergencyNeedId:
+                                        allocation.emergencyNeed
+                                            ? allocation.emergencyNeed.id
+                                            : null,
+
+                                    resourceId:
+                                        allocation.resource
+                                            ? allocation.resource.id
+                                            : null
+
+                                })
+
+                        }
+
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Verification failed"
+                    );
+
+                }
+
+
+                await response.json();
+
+
+                alert(
+                    "Recommendation verified successfully."
+                );
+
+
+                await loadDashboard();
+
+
+                const activePage =
+                    document.querySelector(
+                        ".page-section.active"
+                    );
+
+
+                if (
+                    activePage &&
+                    activePage.id ===
+                    "recommendations"
+                ) {
+
+                    await loadFullRecommendations();
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Verification error:",
+                    error
+                );
+
+
+                alert(
+                    "Unable to verify recommendation."
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           LOAD INCIDENTS
+           ========================================================= */
+
+        async function loadIncidents() {
+
+            const table =
+                document.getElementById(
+                    "incidentTable"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        API +
+                        "/api/incidents"
+                    );
+
+
+                const incidents =
+                    await response.json();
+
+
+                table.innerHTML = "";
+
+
+                incidents.forEach(
+                    incident => {
+
+                        const severityClass =
+                            incident.severity >= 5
+                                ? "critical"
+                                : incident.severity >= 4
+                                    ? "high"
+                                    : incident.severity >= 3
+                                        ? "medium"
+                                        : "low";
+
+
+                        const row =
+                            document.createElement(
+                                "tr"
+                            );
+
+
+                        row.innerHTML = `
+
+                            <td>
+                                #${incident.id}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    ${incident.title}
+                                </strong>
+                            </td>
+
+                            <td>
+                                ${incident.type}
+                            </td>
+
+                            <td>
+                                ${incident.location}
+                            </td>
+
+                            <td>
+
+                                <span class="badge ${severityClass}">
+                                    ${incident.severity}/5
+                                </span>
+
+                            </td>
+
+                        `;
+
+
+                        table.appendChild(
+                            row
+                        );
+
+                    }
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Incident loading error:",
+                    error
+                );
+
+                table.innerHTML = `
+
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty">
+                                Unable to load incidents.
+                            </div>
+                        </td>
+                    </tr>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           LOAD AFFECTED PEOPLE
+           ========================================================= */
+
+        async function loadPeople() {
+
+            const table =
+                document.getElementById(
+                    "peopleTable"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        API +
+                        "/api/affected-people"
+                    );
+
+
+                const people =
+                    await response.json();
+
+
+                table.innerHTML = "";
+
+
+                people.forEach(
+                    person => {
+
+                        const medicalBadge =
+                            person.requiresMedicalAttention
+
+                                ? `<span class="badge critical">
+                                       REQUIRED
+                                   </span>`
+
+                                : `<span class="badge low">
+                                       NO
+                                   </span>`;
+
+
+                        const row =
+                            document.createElement(
+                                "tr"
+                            );
+
+
+                        row.innerHTML = `
+
+                            <td>
+                                #${person.id}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    ${person.name}
+                                </strong>
+                            </td>
+
+                            <td>
+                                ${person.age}
+                            </td>
+
+                            <td>
+                                ${person.gender}
+                            </td>
+
+                            <td>
+                                ${person.condition}
+                            </td>
+
+                            <td>
+                                ${person.location}
+                            </td>
+
+                            <td>
+                                ${medicalBadge}
+                            </td>
+
+                        `;
+
+
+                        table.appendChild(
+                            row
+                        );
+
+                    }
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "People loading error:",
+                    error
+                );
+
+                table.innerHTML = `
+
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty">
+                                Unable to load affected people.
+                            </div>
+                        </td>
+                    </tr>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           LOAD RESOURCES
+           ========================================================= */
+
+        async function loadResources() {
+
+            const table =
+                document.getElementById(
+                    "resourceTable"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        API +
+                        "/api/resources"
+                    );
+
+
+                const resources =
+                    await response.json();
+
+
+                table.innerHTML = "";
+
+
+                resources.forEach(
+                    resource => {
+
+                        const status =
+                            resource.availabilityStatus
+                                ? resource.availabilityStatus
+                                : "UNKNOWN";
+
+
+                        const statusClass =
+                            status.toUpperCase() ===
+                            "AVAILABLE"
+
+                                ? "available"
+
+                                : "pending";
+
+
+                        const row =
+                            document.createElement(
+                                "tr"
+                            );
+
+
+                        row.innerHTML = `
+
+                            <td>
+                                #${resource.id}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    ${resource.name}
+                                </strong>
+                            </td>
+
+                            <td>
+                                ${resource.type}
+                            </td>
+
+                            <td>
+                                ${resource.quantity}
+                            </td>
+
+                            <td>
+
+                                <span class="badge ${statusClass}">
+                                    ${status}
+                                </span>
+
+                            </td>
+
+                            <td>
+                                ${resource.location}
+                            </td>
+
+                            <td>
+                                ${resource.priority}
+                            </td>
+
+                        `;
+
+
+                        table.appendChild(
+                            row
+                        );
+
+                    }
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Resource loading error:",
+                    error
+                );
+
+                table.innerHTML = `
+
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty">
+                                Unable to load resources.
+                            </div>
+                        </td>
+                    </tr>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           LOAD FULL RECOMMENDATIONS
+           ========================================================= */
+
+        async function loadFullRecommendations() {
+
+            const container =
+                document.getElementById(
+                    "fullRecommendationList"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        API +
+                        "/api/resource-allocations"
+                    );
+
+
+                const allocations =
+                    await response.json();
+
+
+                container.innerHTML = "";
+
+
+                if (
+                    !allocations ||
+                    allocations.length === 0
+                ) {
+
+                    container.innerHTML = `
+
+                        <div class="empty">
+                            No recommendations available.
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+
+                allocations.forEach(
+                    allocation => {
+
+                        container.appendChild(
+                            createRecommendationCard(
+                                allocation
+                            )
+                        );
+
+                    }
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Recommendation loading error:",
+                    error
+                );
+
+                container.innerHTML = `
+
+                    <div class="empty">
+                        Unable to load recommendations.
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           ANALYTICS
+           ========================================================= */
+
+        async function loadAnalytics() {
+
+            try {
+
+                const [
+
+                    incidentsResponse,
+                    peopleResponse,
+                    resourcesResponse,
+                    allocationsResponse,
+                    rankingResponse
+
+                ] = await Promise.all([
+
+                    fetch(
+                        API +
+                        "/api/incidents"
+                    ),
+
+                    fetch(
+                        API +
+                        "/api/affected-people"
+                    ),
+
+                    fetch(
+                        API +
+                        "/api/resources"
+                    ),
+
+                    fetch(
+                        API +
+                        "/api/resource-allocations"
+                    ),
+
+                    fetch(
+                        API +
+                        "/api/emergency-priority/ranking"
+                    )
+
+                ]);
+
+
+                const incidents =
+                    await incidentsResponse.json();
+
+                const people =
+                    await peopleResponse.json();
+
+                const resources =
+                    await resourcesResponse.json();
+
+                const allocations =
+                    await allocationsResponse.json();
+
+                const ranking =
+                    await rankingResponse.json();
+
+
+                const critical =
+                    ranking.filter(
+                        item =>
+                            item.priorityLevel ===
+                            "CRITICAL"
+                    ).length;
+
+
+                const high =
+                    ranking.filter(
+                        item =>
+                            item.priorityLevel ===
+                            "HIGH"
+                    ).length;
+
+
+                const medium =
+                    ranking.filter(
+                        item =>
+                            item.priorityLevel ===
+                            "MEDIUM"
+                    ).length;
+
+
+                const low =
+                    ranking.filter(
+                        item =>
+                            item.priorityLevel ===
+                            "LOW"
+                    ).length;
+
+
+                const available =
+                    resources.filter(
+                        resource =>
+                            resource.availabilityStatus &&
+                            resource.availabilityStatus
+                                .toUpperCase() ===
+                            "AVAILABLE"
+                    ).length;
+
+
+                const unavailable =
+                    resources.length -
+                    available;
+
+
+                const verified =
+                    allocations.filter(
+                        allocation =>
+                            allocation.status ===
+                            "VERIFIED"
+                    ).length;
+
+
+                document.getElementById(
+                    "analyticsIncidents"
+                ).textContent =
+                    incidents.length;
+
+
+                document.getElementById(
+                    "analyticsPeople"
+                ).textContent =
+                    people.length;
+
+
+                document.getElementById(
+                    "analyticsResources"
+                ).textContent =
+                    resources.length;
+
+
+                document.getElementById(
+                    "analyticsVerified"
+                ).textContent =
+                    verified;
+
+
+                document.getElementById(
+                    "analyticsCritical"
+                ).textContent =
+                    critical;
+
+
+                document.getElementById(
+                    "analyticsHigh"
+                ).textContent =
+                    high;
+
+
+                document.getElementById(
+                    "analyticsMedium"
+                ).textContent =
+                    medium;
+
+
+                document.getElementById(
+                    "analyticsLow"
+                ).textContent =
+                    low;
+
+
+                document.getElementById(
+                    "analyticsAvailable"
+                ).textContent =
+                    available;
+
+
+                document.getElementById(
+                    "analyticsUnavailable"
+                ).textContent =
+                    unavailable;
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Analytics loading error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           CREATE EMERGENCY NEED
+           ========================================================= */
+
+        document.getElementById(
+            "needForm"
+        ).addEventListener(
+
+            "submit",
+
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const message =
+                    document.getElementById(
+                        "operationMessage"
+                    );
+
+
+                const affectedPersonId =
+                    Number(
+                        document.getElementById(
+                            "affectedPersonId"
+                        ).value
+                    );
+
+
+                const need = {
+
+                    needType:
+                        document.getElementById(
+                            "needType"
+                        ).value.trim(),
+
+                    description:
+                        document.getElementById(
+                            "needDescription"
+                        ).value.trim(),
+
+                    urgency:
+                        Number(
+                            document.getElementById(
+                                "needUrgency"
+                            ).value
+                        ),
+
+                    status:
+                        "OPEN",
+
+                    location:
+                        document.getElementById(
+                            "needLocation"
+                        ).value.trim(),
+
+                    affectedPersonId:
+                        affectedPersonId
+
+                };
+
+
+                try {
+
+                    message.style.color =
+                        "#2563eb";
+
+
+                    message.textContent =
+                        "Creating emergency need...";
+
+
+                    const response =
+                        await fetch(
+
+                            API +
+                            "/api/emergency-needs",
+
+                            {
+
+                                method: "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json"
+
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        need
+                                    )
+
+                            }
+
+                        );
+
+
+                    if (!response.ok) {
+
+                        const errorText =
+                            await response.text();
+
+
+                        console.error(
+                            "Backend error:",
+                            errorText
+                        );
+
+
+                        throw new Error(
+                            "Failed to create emergency need"
+                        );
+
+                    }
+
+
+                    const createdNeed =
+                        await response.json();
+
+
+                    message.style.color =
+                        "#16a34a";
+
+
+                    message.textContent =
+                        "Emergency Need #" +
+                        createdNeed.id +
+                        " created successfully. Finding best resource...";
+
+
+                    document.getElementById(
+                        "needForm"
+                    ).reset();
+
+
+                    try {
+
+                        const recommendationResponse =
+                            await fetch(
+
+                                API +
+                                "/api/resource-allocations/recommend-best/" +
+                                createdNeed.id,
+
+                                {
+                                    method: "POST"
+                                }
+
+                            );
+
+
+                        if (
+                            recommendationResponse.ok
+                        ) {
+
+                            const recommendation =
+                                await recommendationResponse.json();
+
+
+                            const recommendedResource =
+                                recommendation.resource;
+
+
+                            message.style.color =
+                                "#16a34a";
+
+
+                            message.textContent =
+                                "Emergency Need #" +
+                                createdNeed.id +
+                                " created successfully. " +
+                                "Best resource: " +
+                                (
+                                    recommendedResource
+                                        ? recommendedResource.name
+                                        : "Resource"
+                                ) +
+                                " | Match Score: " +
+                                recommendation.matchScore +
+                                "/100 | Pending Human Verification.";
+
+                        }
+
+                        else {
+
+                            message.style.color =
+                                "#d97706";
+
+
+                            message.textContent =
+                                "Emergency Need #" +
+                                createdNeed.id +
+                                " created successfully, but no suitable resource recommendation was found.";
+
+                        }
+
+                    }
+
+                    catch (recommendationError) {
+
+                        console.error(
+                            "Resource recommendation error:",
+                            recommendationError
+                        );
+
+
+                        message.style.color =
+                            "#d97706";
+
+
+                        message.textContent =
+                            "Emergency Need #" +
+                            createdNeed.id +
+                            " created successfully, but resource recommendation could not be completed.";
+
+                    }
+
+
+                    await loadDashboard();
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Emergency need creation error:",
+                        error
+                    );
+
+
+                    message.style.color =
+                        "#dc2626";
+
+
+                    message.textContent =
+                        "Unable to create emergency need. Check the backend.";
+
+                }
+
+            }
+
+        );
+
+
+        /* =========================================================
+           INITIAL LOAD
+           ========================================================= */
+
+        loadDashboard();
+
+
+        /* =========================================================
+           AUTO REFRESH
+           ========================================================= */
+
+        setInterval(
+            loadDashboard,
+            10000
+        );
+
+
+    </script>
+
+</body>
+
+</html>
